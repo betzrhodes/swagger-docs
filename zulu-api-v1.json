@@ -1,0 +1,808 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "description" : "<h1 style=\"color:#fff;background-color:#1960a1;padding:20px 30px;\">Zulu OpenJDK Discovery API</h1><h4 style=\"color:#888;font-size:18px;padding:5px 30px 10px 30px;\">The Zulu OpenJDK Discovery API helps utilize the OpenJDK builds provided by Azul Systems</h4><h3 style=\"color:#333;font-size:21px;padding:10px 30px 0px 30px;\">Overview</h3><p style=\"color:#777;font-size:15px;padding:0px 30px;\">This API allows you to programmatically fetch lists of OpenJDK builds, detailed information about each build, and a way to download them.</p><p style=\"color:#777;font-size:15px;padding:0px 30px 5px 30px;\">Current API version 1.0</p><p style=\"border-top:1px solid;border-color:#eee\"></p><ul style=\"display:inline-block;padding:0px 30px;\"><li style=\"display:inline-block;padding:0px;\"><a href=\"https://www.azul.com/products/zulu-community/\">Azul Website</a></li><li style=\"display:inline-block;padding:5px;\">|</li><li style=\"display:inline-block;padding:0px;\"><a href=\"https://www.azul.com/legal/privacy-policy/\">Privacy Policy</a></li><li style=\"display:inline-block;padding:5px;\">|</li><li style=\"display:inline-block;padding:0px;\"><a href=\"https://www.azul.com/legal/legal/\">Legal</a></li><li style=\"display:inline-block;padding:5px;\">|</li><li style=\"display:inline-block;padding:0px;\"><a href=\"https://www.azul.com/legal/terms-of-use/\">Terms of Use</a></li></ul>",
+    "version" : "1.0"
+  },
+  "servers" : [ {
+    "url" : "https://api.azul.com/zulu/download/community/v1.0",
+    "description" : "The base url for all requests made to the Zulu OpenJDK Discovery API."
+  } ],
+  "paths" : {
+    "/bundles/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "List bundles",
+        "description" : "Returns an array of bundle summary objects. Please use query parameters to retrieve a filtered list.",
+        "parameters" : [ {
+          "name" : "jdk_version",
+          "in" : "query",
+          "description" : "Filters the result by the version of the OpenJDK, in a format of 4 numbers: major version, minor version, revision and patch (which is typically zero for most versions of the JDK) − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.0"
+        }, {
+          "name" : "zulu_version",
+          "in" : "query",
+          "description" : "Filters the results by the version of Zulu, in a format of 4 numbers: major version, minor version, revision and patch − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.33"
+        }, {
+          "name" : "os",
+          "in" : "query",
+          "description" : "<p>Filters the result by the operating system the bundle is targeting.</p><p>Allowed values: </p><ul><li><code>linux</code> - Linux, GLib</li><li><code>linux_musl</code> - Linux, Musl</li><li><code>macos</code> - MacOS X</li><li><code>windows</code> - Windows</li><li><code>solaris</code> - Solaris</li><li><code>qnx</code> - QNX</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "linux", "linux_musl", "macos", "windows", "solaris", "qnx" ]
+          }
+        }, {
+          "name" : "arch",
+          "in" : "query",
+          "description" : "<p>Filters the result by the CPU architecture the bundle is built for.</p><p>Allowed values: </p><ul><li><code>x86</code></li><li><code>arm</code></li><li><code>mips</code></li><li><code>ppc</code></li><li><code>sparcv9</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "x86", "arm", "mips", "ppc", "sparcv9" ]
+          }
+        }, {
+          "name" : "hw_bitness",
+          "in" : "query",
+          "description" : "<p>Filters the result by the word length of the CPU.</p><p>Allowed values: </p><ul><li><code>64</code></li><li><code>32</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "64", "32" ]
+          }
+        }, {
+          "name" : "abi",
+          "in" : "query",
+          "description" : "<p>Filters the result by the type of floating point ABI this bundle uses.<br>Only applies to 32-bit ARM builds.</p><p>Allowed values: </p><ul><li><code>soft_float</code></li><li><code>hard_float</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "soft_float", "hard_float" ]
+          }
+        }, {
+          "name" : "ext",
+          "in" : "query",
+          "description" : "<p>Filters the result by the extension of the bundle file.</p><p>Allowed values: </p><ul><li><code>cab</code></li><li><code>deb</code></li><li><code>rpm</code></li><li><code>msi</code></li><li><code>dmg</code></li><li><code>tar.gz</code></li><li><code>zip</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "cab", "deb", "rpm", "msi", "dmg", "tar.gz", "zip" ]
+          }
+        }, {
+          "name" : "bundle_type",
+          "in" : "query",
+          "description" : "<p>Filters the result by bundle type.</p><p>Allowed values: </p><ul><li><code>jdk</code></li><li><code>jre</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "jdk", "jre" ]
+          }
+        }, {
+          "name" : "javafx",
+          "in" : "query",
+          "description" : "Whether the result includes bundles with JavaFX support",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "release_status",
+          "in" : "query",
+          "description" : "<p>Filters the result by release status.<br>If no value is specified only general availability bundles will be returned.</p><p>Allowed values: </p><ul><li><code>ga</code> - General Availability</li><li><code>ea</code> - Early Access</li><li><code>both</code> - General Availability and Early Access</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ga", "ea", "both" ]
+          }
+        }, {
+          "name" : "support_term",
+          "in" : "query",
+          "description" : "<p>Filters the result by JDK support term.</p><p>Allowed values: </p><ul><li><code>lts</code> - Long Term Support</li><li><code>mts</code> - Medium Term Support</li><li><code>sts</code> - Short Term Support</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "lts", "mts", "sts" ]
+          }
+        }, {
+          "name" : "features",
+          "in" : "query",
+          "description" : "<p>Filters the result by various Java API feature flags. The <code>features</code> parameter accepts a list of desired features and returns bundles that support all of the Java APIs requested.</p><p>Supported values:</p><ul><li><code>cp3</code> - Compact Profile compact3</li><li><code>fx</code> - JavaFX API</li><li><code>headful</code> or <code>headfull</code> - Headful JVM</li><li><code>headless</code> - Headless JVM</li><li><code>jdk</code> - JDK rather than JRE</li></ul>",
+          "required" : false,
+          "style" : "form",
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleSummaryList"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/{bundle_id}/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Bundle details by Id",
+        "description" : "Retrieves details for the specified bundle and returns a single bundle detail object.",
+        "parameters" : [ {
+          "name" : "bundle_id",
+          "in" : "path",
+          "description" : "A surrogate primary key",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "1339"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleDetails"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/{bundle_id}/binary/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Download bundle by Id",
+        "description" : "Redirects to a download url for the specified bundle.",
+        "parameters" : [ {
+          "name" : "bundle_id",
+          "in" : "path",
+          "description" : "A surrogate primary key",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "302" : {
+            "description" : "Redirect",
+            "content" : {
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/latest/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Bundle details by query params",
+        "description" : "Retrieves details for the latest bundle which matches filter criteria and returns a single bundle detial object",
+        "parameters" : [ {
+          "name" : "jdk_version",
+          "in" : "query",
+          "description" : "Filters the result by the version of the OpenJDK, in a format of 4 numbers: major version, minor version, revision and patch (which is typically zero for most versions of the JDK) − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.0"
+        }, {
+          "name" : "zulu_version",
+          "in" : "query",
+          "description" : "Filters the results by the version of Zulu, in a format of 4 numbers: major version, minor version, revision and patch − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.33"
+        }, {
+          "name" : "os",
+          "in" : "query",
+          "description" : "<p>Filters the result by the operating system the bundle is targeting.</p><p>Allowed values: </p><ul><li><code>linux</code> - Linux, GLib</li><li><code>linux_musl</code> - Linux, Musl</li><li><code>macos</code> - MacOS X</li><li><code>windows</code> - Windows</li><li><code>solaris</code> - Solaris</li><li><code>qnx</code> - QNX</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "linux", "linux_musl", "macos", "windows", "solaris", "qnx" ]
+          }
+        }, {
+          "name" : "arch",
+          "in" : "query",
+          "description" : "<p>Filters the result by the CPU architecture the bundle is built for.</p><p>Allowed values: </p><ul><li><code>x86</code></li><li><code>arm</code></li><li><code>mips</code></li><li><code>ppc</code></li><li><code>sparcv9</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "x86", "arm", "mips", "ppc", "sparcv9" ]
+          }
+        }, {
+          "name" : "hw_bitness",
+          "in" : "query",
+          "description" : "<p>Filters the result by the word length of the CPU.</p><p>Allowed values: </p><ul><li><code>64</code></li><li><code>32</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "64", "32" ]
+          }
+        }, {
+          "name" : "abi",
+          "in" : "query",
+          "description" : "<p>Filters the result by the type of floating point ABI this bundle uses.<br>Only applies to 32-bit ARM builds.</p><p>Allowed values: </p><ul><li><code>soft_float</code></li><li><code>hard_float</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "soft_float", "hard_float" ]
+          }
+        }, {
+          "name" : "ext",
+          "in" : "query",
+          "description" : "<p>Filters the result by the extension of the bundle file.</p><p>Allowed values: </p><ul><li><code>cab</code></li><li><code>deb</code></li><li><code>rpm</code></li><li><code>msi</code></li><li><code>dmg</code></li><li><code>tar.gz</code></li><li><code>zip</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "cab", "deb", "rpm", "msi", "dmg", "tar.gz", "zip" ]
+          }
+        }, {
+          "name" : "bundle_type",
+          "in" : "query",
+          "description" : "<p>Filters the result by bundle type.</p><p>Allowed values: </p><ul><li><code>jdk</code></li><li><code>jre</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "jdk", "jre" ]
+          }
+        }, {
+          "name" : "javafx",
+          "in" : "query",
+          "description" : "Whether the result includes bundles with JavaFX support",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "release_status",
+          "in" : "query",
+          "description" : "<p>Filters the result by release status.<br>If no value is specified only general availability bundles will be returned.</p><p>Allowed values: </p><ul><li><code>ga</code> - General Availability</li><li><code>ea</code> - Early Access</li><li><code>both</code> - General Availability and Early Access</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ga", "ea", "both" ]
+          }
+        }, {
+          "name" : "support_term",
+          "in" : "query",
+          "description" : "<p>Filters the result by JDK support term.</p><p>Allowed values: </p><ul><li><code>lts</code> - Long Term Support</li><li><code>mts</code> - Medium Term Support</li><li><code>sts</code> - Short Term Support</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "lts", "mts", "sts" ]
+          }
+        }, {
+          "name" : "features",
+          "in" : "query",
+          "description" : "<p>Filters the result by various Java API feature flags. The <code>features</code> parameter accepts a list of desired features and returns bundles that support all of the Java APIs requested.</p><p>Supported values:</p><ul><li><code>cp3</code> - Compact Profile compact3</li><li><code>fx</code> - JavaFX API</li><li><code>headful</code> or <code>headfull</code> - Headful JVM</li><li><code>headless</code> - Headless JVM</li><li><code>jdk</code> - JDK rather than JRE</li></ul>",
+          "required" : false,
+          "style" : "form",
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleDetails"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/latest/binaru/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Download bundle by query params",
+        "description" : "Redirects to a download url for the latest bundle which matches the filter criteria.",
+        "parameters" : [ {
+          "name" : "jdk_version",
+          "in" : "query",
+          "description" : "Filters the result by the version of the OpenJDK, in a format of 4 numbers: major version, minor version, revision and patch (which is typically zero for most versions of the JDK) − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.0"
+        }, {
+          "name" : "zulu_version",
+          "in" : "query",
+          "description" : "Filters the results by the version of Zulu, in a format of 4 numbers: major version, minor version, revision and patch − separated by dots (i.e. semantic versioning). Numbers can be omitted starting from revision; omitted number corresponds to all values.",
+          "required" : false,
+          "schema" : {
+            "minimum" : 6,
+            "type" : "string"
+          },
+          "example" : "11.33"
+        }, {
+          "name" : "os",
+          "in" : "query",
+          "description" : "<p>Filters the result by the operating system the bundle is targeting.</p><p>Allowed values: </p><ul><li><code>linux</code> - Linux, GLib</li><li><code>linux_musl</code> - Linux, Musl</li><li><code>macos</code> - MacOS X</li><li><code>windows</code> - Windows</li><li><code>solaris</code> - Solaris</li><li><code>qnx</code> - QNX</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "linux", "linux_musl", "macos", "windows", "solaris", "qnx" ]
+          }
+        }, {
+          "name" : "arch",
+          "in" : "query",
+          "description" : "<p>Filters the result by the CPU architecture the bundle is built for.</p><p>Allowed values: </p><ul><li><code>x86</code></li><li><code>arm</code></li><li><code>mips</code></li><li><code>ppc</code></li><li><code>sparcv9</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "x86", "arm", "mips", "ppc", "sparcv9" ]
+          }
+        }, {
+          "name" : "hw_bitness",
+          "in" : "query",
+          "description" : "<p>Filters the result by the word length of the CPU.</p><p>Allowed values: </p><ul><li><code>64</code></li><li><code>32</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "64", "32" ]
+          }
+        }, {
+          "name" : "abi",
+          "in" : "query",
+          "description" : "<p>Filters the result by the type of floating point ABI this bundle uses.<br>Only applies to 32-bit ARM builds.</p><p>Allowed values: </p><ul><li><code>soft_float</code></li><li><code>hard_float</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "soft_float", "hard_float" ]
+          }
+        }, {
+          "name" : "ext",
+          "in" : "query",
+          "description" : "<p>Filters the result by the extension of the bundle file.</p><p>Allowed values: </p><ul><li><code>cab</code></li><li><code>deb</code></li><li><code>rpm</code></li><li><code>msi</code></li><li><code>dmg</code></li><li><code>tar.gz</code></li><li><code>zip</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "cab", "deb", "rpm", "msi", "dmg", "tar.gz", "zip" ]
+          }
+        }, {
+          "name" : "bundle_type",
+          "in" : "query",
+          "description" : "<p>Filters the result by bundle type.</p><p>Allowed values: </p><ul><li><code>jdk</code></li><li><code>jre</code></li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "jdk", "jre" ]
+          }
+        }, {
+          "name" : "javafx",
+          "in" : "query",
+          "description" : "Whether the result includes bundles with JavaFX support",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "release_status",
+          "in" : "query",
+          "description" : "<p>Filters the result by release status.<br>If no value is specified only general availability bundles will be returned.</p><p>Allowed values: </p><ul><li><code>ga</code> - General Availability</li><li><code>ea</code> - Early Access</li><li><code>both</code> - General Availability and Early Access</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ga", "ea", "both" ]
+          }
+        }, {
+          "name" : "support_term",
+          "in" : "query",
+          "description" : "<p>Filters the result by JDK support term.</p><p>Allowed values: </p><ul><li><code>lts</code> - Long Term Support</li><li><code>mts</code> - Medium Term Support</li><li><code>sts</code> - Short Term Support</li></ul>",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "lts", "mts", "sts" ]
+          }
+        }, {
+          "name" : "features",
+          "in" : "query",
+          "description" : "<p>Filters the result by various Java API feature flags. The <code>features</code> parameter accepts a list of desired features and returns bundles that support all of the Java APIs requested.</p><p>Supported values:</p><ul><li><code>cp3</code> - Compact Profile compact3</li><li><code>fx</code> - JavaFX API</li><li><code>headful</code> or <code>headfull</code> - Headful JVM</li><li><code>headless</code> - Headless JVM</li><li><code>jdk</code> - JDK rather than JRE</li></ul>",
+          "required" : false,
+          "style" : "form",
+          "explode" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "302" : {
+            "description" : "Redirect",
+            "content" : {
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/sha256/{sha256checksum}/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Bundle details by sha256",
+        "description" : "Retrieves details for the specified bundle and returns a single bundle detail object.",
+        "parameters" : [ {
+          "name" : "sha256checksum",
+          "in" : "path",
+          "description" : "A base64-encoded hash value that has a length of 64 bytes",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "0038707cd44ae1d3f535b20aab35e3cf7286371c0c7644e5d7392b52f45caa0a"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BundleDetails"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    },
+    "/bundles/sha256/{sha256checksum}/binary/" : {
+      "get" : {
+        "tags" : [ "bundles" ],
+        "summary" : "Download bundle by sha256",
+        "description" : "Redirects to a download url for the specified bundle.",
+        "parameters" : [ {
+          "name" : "sha256checksum",
+          "in" : "path",
+          "description" : "A base64-encoded hash value that has a length of 64 bytes",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "302" : {
+            "description" : "Redirect",
+            "content" : {
+              "application/octet-stream" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Resource not found.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX" : {
+            "description" : "Unexpected error."
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "BundleSummaryList" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/BundleSummary"
+        }
+      },
+      "BundleSummary" : {
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 1022
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "zulu11.37.17-ca-jdk11.0.6-linux_x64.tar.gz"
+          },
+          "url" : {
+            "type" : "string",
+            "example" : "https://cdn.azul.com/zulu/bin/zulu11.37.17-ca-jdk11.0.6-linux_x64.tar.gz"
+          },
+          "jdk_version" : {
+            "type" : "array",
+            "example" : [ 11, 0, 6, 10 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "zulu_version" : {
+            "type" : "array",
+            "example" : [ 11, 37, 17, 0 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          }
+        }
+      },
+      "BundleDetails" : {
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 1339
+          },
+          "arch" : {
+            "type" : "string",
+            "example" : "arm"
+          },
+          "hw_bitness" : {
+            "type" : "string",
+            "example" : "32"
+          },
+          "os" : {
+            "type" : "string",
+            "example" : "linux"
+          },
+          "ext" : {
+            "type" : "string",
+            "example" : "tar.gz"
+          },
+          "bundle_type" : {
+            "type" : "string",
+            "example" : "jdk"
+          },
+          "last_modified" : {
+            "type" : "string",
+            "example" : "2020-04-22T09:44:13Z"
+          },
+          "url" : {
+            "type" : "string",
+            "example" : "https://cdn.azul.com/zulu-embedded/bin/zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf.tar.gz"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf.tar.gz"
+          },
+          "zulu_version" : {
+            "type" : "array",
+            "example" : [ 11, 39, 61, 0 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "jdk_version" : {
+            "type" : "array",
+            "example" : [ 11, 0, 7, 10 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "abi" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 1
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 353453000
+          },
+          "md5_hash" : {
+            "type" : "string",
+            "example" : "469f5e331e9099ac5f7fb7e14c2ff1ca"
+          },
+          "sha256_hash" : {
+            "type" : "string",
+            "example" : "46e5dfb774a018a721e66e7d4beee7cee2561cbd568a83c9cc2f5a6f77225c06"
+          },
+          "javafx" : {
+            "type" : "boolean",
+            "example" : false
+          },
+          "release_status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 2
+          },
+          "features" : {
+            "type" : "array",
+            "example" : [ "jdk" ],
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ErrorResponse" : {
+        "required" : [ "code" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error details."
+          }
+        }
+      }
+    }
+  }
+}
